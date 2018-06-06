@@ -4,69 +4,51 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-
-import com.reqven.kayu.dummy.DummyContent.DummyItem;
-
-import java.util.List;
 
 
-public class HistoryItemRecyclerViewAdapter extends RecyclerView.Adapter<HistoryItemRecyclerViewAdapter.ViewHolder> {
+public class HistoryItemRecyclerViewAdapter extends RecyclerView.Adapter<HistoryViewHolder> {
 
-    private final List<DummyItem> mValues;
-    private final HistoryFragment.FragmentHistoryListener mListener;
+    private final OnListItemClickListener listener;
+    private final String[] values;
 
-    public HistoryItemRecyclerViewAdapter(List<DummyItem> items, HistoryFragment.FragmentHistoryListener listener) {
-        mValues = items;
-        mListener = listener;
+
+    public HistoryItemRecyclerViewAdapter(String[] values, OnListItemClickListener listener) {
+        this.values = values;
+        this.listener = listener;
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.history_item, parent, false);
-        return new ViewHolder(view);
-    }
+    public HistoryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.history_item, parent, false);
 
-    @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
-
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    //mListener.onListFragmentInteraction(holder.mItem);
-                }
-            }
-        });
+        return new HistoryViewHolder(view);
     }
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return values.length;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
-        public DummyItem mItem;
+    @Override
+    public void onBindViewHolder(final HistoryViewHolder holder, int position) {
 
-        public ViewHolder(View view) {
-            super(view);
-            mView = view;
-            mIdView = (TextView) view.findViewById(R.id.item_number);
-            mContentView = (TextView) view.findViewById(R.id.content);
-        }
+        HistoryViewHolder myHolder = (HistoryViewHolder) holder;
+        myHolder.bindValue(values[position]);
 
-        @Override
-        public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
-        }
+        /*holder.mItem = mValues.get(position);
+        holder.mIdView.setText(mValues.get(position).id);
+        holder.mContentView.setText(mValues.get(position).content);*/
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+           public void onClick(View v) {
+               listener.onItemClicked(holder.getAdapterPosition());
+           }
+       });
+    }
+
+
+    public interface OnListItemClickListener {
+        void onItemClicked(int position);
     }
 }
