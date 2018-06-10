@@ -4,27 +4,42 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 
 public class HistoryFragment extends Fragment {
     private FragmentHistoryListener listener;
     private ArrayList<Product> products;
+    private ArrayList<String> codes;
+    private RecyclerView recyclerView;
+    private HistoryItemRecyclerViewAdapter adapter;
 
-    // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
     private int mColumnCount = 1;
+
 
     public interface FragmentHistoryListener {
         void onInputHistorySent(CharSequence input);
+    }
+
+    public HistoryFragment() {
+        codes = new ArrayList<String>();
+        codes.add("3564700019313");
+        codes.add("3478820023184");
+        codes.add("3017620424403");
+        codes.add("wrongbarcode");
     }
 
     // TODO: Customize parameter initialization
@@ -52,24 +67,20 @@ public class HistoryFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_history, container, false);
 
         final Context context = view.getContext();
-        RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
+        recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.addItemDecoration(new DividerItemDecoration(
-                context, DividerItemDecoration.VERTICAL)
-        );
+        recyclerView.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL));
 
-        final String[] codes = {"3564700019313", "wrongbarcode"};
-        HistoryItemRecyclerViewAdapter adapter = new HistoryItemRecyclerViewAdapter(codes, new HistoryItemRecyclerViewAdapter.OnListItemClickListener() {
+        adapter = new HistoryItemRecyclerViewAdapter(codes, new HistoryItemRecyclerViewAdapter.OnListItemClickListener() {
             @Override
             public void onItemClicked(int position) {
                 Intent intent = new Intent(context, ProductActivity.class);
-                intent.putExtra("code", codes[position]);
+                intent.putExtra("code", codes.get(position));
                 startActivity(intent);
             }
         });
         recyclerView.setAdapter(adapter);
-
         return view;
     }
 
@@ -90,4 +101,11 @@ public class HistoryFragment extends Fragment {
         super.onDetach();
         listener = null;
     }
+
+
+    public void addItem(CharSequence input) {
+        codes.add(input.toString());
+        adapter.notifyItemInserted(codes.size() - 1);
+    }
+
 }

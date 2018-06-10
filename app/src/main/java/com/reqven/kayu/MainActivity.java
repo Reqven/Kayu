@@ -16,21 +16,20 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity implements
-        HomeFragment.FragmentHomeListener,
-        HistoryFragment.FragmentHistoryListener,
-        AccountFragment.FragmentAccountListener,
-        NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements HomeFragment.FragmentHomeListener, HistoryFragment.FragmentHistoryListener, AccountFragment.FragmentAccountListener, NavigationView.OnNavigationItemSelectedListener {
 
+    HomeFragment fragmentHome;
+    HistoryFragment fragmentHistory;
+    AccountFragment fragmentAccount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
 
-        final HomeFragment fragmentHome       = new HomeFragment();
-        final HistoryFragment fragmentHistory = new HistoryFragment();
-        final AccountFragment fragmentAccount = new AccountFragment();
+        fragmentHome       = new HomeFragment();
+        fragmentHistory = new HistoryFragment();
+        fragmentAccount = new AccountFragment();
 
         Toolbar toolBar = findViewById(R.id.toolbar);
         toolBar.setTitle(getResources().getString(R.string.app_name));
@@ -74,10 +73,8 @@ public class MainActivity extends AppCompatActivity implements
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                onInputHistorySent("test");
+                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
             }
         });
 
@@ -165,6 +162,6 @@ public class MainActivity extends AppCompatActivity implements
     }
     @Override
     public void onInputHistorySent(CharSequence input) {
-
+        fragmentHistory.addItem(input);
     }
 }

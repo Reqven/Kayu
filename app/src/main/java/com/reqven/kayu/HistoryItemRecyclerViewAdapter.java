@@ -5,14 +5,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+
 
 public class HistoryItemRecyclerViewAdapter extends RecyclerView.Adapter<HistoryViewHolder> {
 
     private final OnListItemClickListener listener;
-    private final String[] values;
+    private final ArrayList<String> values;
 
 
-    public HistoryItemRecyclerViewAdapter(String[] values, OnListItemClickListener listener) {
+    public HistoryItemRecyclerViewAdapter(ArrayList<String> values, OnListItemClickListener listener) {
         this.values = values;
         this.listener = listener;
     }
@@ -27,14 +29,14 @@ public class HistoryItemRecyclerViewAdapter extends RecyclerView.Adapter<History
 
     @Override
     public int getItemCount() {
-        return values.length;
+        return values.size();
     }
 
     @Override
     public void onBindViewHolder(final HistoryViewHolder holder, int position) {
 
         HistoryViewHolder myHolder = (HistoryViewHolder) holder;
-        myHolder.bindValue(values[position]);
+        myHolder.bindValue(values.get(position));
 
         /*holder.mItem = mValues.get(position);
         holder.mIdView.setText(mValues.get(position).id);
@@ -45,6 +47,10 @@ public class HistoryItemRecyclerViewAdapter extends RecyclerView.Adapter<History
                listener.onItemClicked(holder.getAdapterPosition());
            }
        });
+    }
+
+    public void addItem(String input) {
+        values.add(input);
     }
 
 
