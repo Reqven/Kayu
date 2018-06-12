@@ -3,6 +3,12 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_history">History</string>
+
+    <string name="nutriment_salt">Sel</string>
+    <string name="nutriment_sugars">Sucre</string>
+    <string name="nutriment_fat">Matières grasses</string>
+    <string name="nutriment_saturated_fat">Graisses saturées</string>
+
     <string name="title_account">Account</string>
     <string name="title_activity_scrolling">ScrollingActivity</string>
     <string name="large_text">
