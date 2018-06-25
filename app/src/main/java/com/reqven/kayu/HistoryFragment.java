@@ -39,7 +39,7 @@ public class HistoryFragment extends Fragment {
         codes.add("3564700019313");
         codes.add("3478820023184");
         codes.add("3017620424403");
-        codes.add("wrongbarcode");
+        codes.add("568986451684651");
     }
 
     // TODO: Customize parameter initialization

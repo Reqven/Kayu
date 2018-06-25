@@ -11,6 +11,7 @@ public class Product {
 
     private String name;
     private String barcode;
+    private Boolean found;
     private Nutriment salt;
     private Nutriment sugar;
     private Nutriment fat;
@@ -24,6 +25,7 @@ public class Product {
     public Product() {
         nutriments = new ArrayList<>();
         palm_oil = false;
+        found = true;
     }
 
     public Product(String barcode) {
@@ -113,5 +115,13 @@ public class Product {
 
     public void setPalmOil(boolean bool) {
         this.palm_oil = bool;
+    }
+
+    public Boolean isFound() {
+        return found;
+    }
+
+    public void setIsFound(Boolean found) {
+        this.found = found;
     }
 }

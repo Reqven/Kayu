@@ -1,15 +1,10 @@
 package com.reqven.kayu;
 
 import android.content.Context;
-import android.support.constraint.ConstraintLayout;
 import android.util.Log;
-import android.widget.Toast;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.HashMap;
 
 public class ProductJSON {
     private Product product;
@@ -19,12 +14,12 @@ public class ProductJSON {
     private Context context;
 
     public ProductJSON(JSONObject json, Context context) {
+        product = new Product();
         try {
             if (json.getString("status").equals("1")) {
                 JSONObject p = json.getJSONObject("product");
                 this.context = context;
 
-                product = new Product();
                 product.setBarcode(json.getString("code"));
                 product.setName(p.getString("product_name_fr"));
 
@@ -32,9 +27,12 @@ public class ProductJSON {
                 nutriments       = p.getJSONObject("nutriments");
                 ingredients_tags = p.getJSONArray("ingredients_tags");
                 setProductNutriments();
+            } else {
+                product.setIsFound(false);
             }
         } catch (JSONException e) {
             Log.d("Debug","ProductJSON:__construct: " + e.getMessage());
+            product.setIsFound(false);
         }
     }
 
