@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="additives">
+        <item>Pas toxique</item>
+        <item>Douteux</item>
+        <item>Toxique</item>
+        <item>Très toxique</item>
+    </string-array>
+    <string-array name="additives_values">
+        <item>clean</item>
+        <item>doubt</item>
+        <item>toxic</item>
+        <item>super-toxic</item>
+    </string-array>
+
+    <string-array name="nutriments">
+        <item>Faible quantité</item>
+        <item>Quantité modérée</item>
+        <item>Quantité élevée</item>
+    </string-array>
+    <string-array name="nutriments_values">
+        <item>low</item>
+        <item>medium</item>
+        <item>high</item>
+    </string-array>
+
+
+
+</resources>

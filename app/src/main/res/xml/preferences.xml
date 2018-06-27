@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <PreferenceCategory
+        android:title="Nutriments">
+        <ListPreference
+            android:key="salt"
+            android:title="@string/nutriment_salt"
+            android:entries="@array/nutriments"
+            android:entryValues="@array/nutriments_values"
+            android:summary="%s"/>
+        <ListPreference
+            android:key="sugar"
+            android:title="@string/nutriment_sugars"
+            android:entries="@array/nutriments"
+            android:entryValues="@array/nutriments_values"
+            android:summary="%s"/>
+        <ListPreference
+            android:key="fat"
+            android:title="@string/nutriment_fat"
+            android:entries="@array/nutriments"
+            android:entryValues="@array/nutriments_values"
+            android:summary="%s"/>
+        <ListPreference
+            android:key="saturatedFat"
+            android:title="@string/nutriment_saturated_fat"
+            android:entries="@array/nutriments"
+            android:entryValues="@array/nutriments_values"
+            android:summary="%s"/>
+        <CheckBoxPreference
+            android:key="palmoil"
+            android:title="Huile de palme"
+            android:summary="Je ne veux pas d'huile de palme"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Additifs">
+        <ListPreference
+            android:key="list"
+            android:title="Toxicité"
+            android:entries="@array/additives"
+            android:entryValues="@array/additives_values"
+            android:summary="Seuil minimum de toxicité des additifs à refuser"/>
+        <EditTextPreference
+            android:key="additives"
+            android:title="Exceptions"
+            android:summary="Additifs à refuser systématiquement"/>
+    </PreferenceCategory>
+
+</PreferenceScreen>

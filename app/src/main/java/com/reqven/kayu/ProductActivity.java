@@ -1,6 +1,7 @@
 package com.reqven.kayu;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.ActionBar;
@@ -12,6 +13,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import java.util.ArrayList;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -20,7 +23,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import org.json.JSONObject;
 
-public class ProductActivity extends AppCompatActivity{
+public class ProductActivity extends AppCompatActivity {
     private Product product;
     private ProductJSON productJSON;
     private ActionBar actionBar;
@@ -75,6 +78,7 @@ public class ProductActivity extends AppCompatActivity{
                         toolBar.setTitle(product.getName());
                         findViewById(R.id.loadingLayout).setVisibility(View.GONE);
                         findViewById(R.id.contentLayout).setVisibility(View.VISIBLE);
+                        setProductLayout(product.isFound());
                     }
                 }, new Response.ErrorListener() {
                     @Override
@@ -90,5 +94,25 @@ public class ProductActivity extends AppCompatActivity{
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
+    }
+
+    public void setProductLayout(Boolean good) {
+        int primary     = R.color.colorPrimary;
+        int primaryDark = R.color.colorPrimaryDark;
+
+        if (!good) {
+            primary = R.color.redPrimary;
+            primaryDark = R.color.redPrimaryDark;
+        }
+        int color = getResources().getColor(primary);
+        toolBar.setBackgroundColor(color);
+        tabLayout.setBackgroundColor(color);
+
+        color = getResources().getColor(primaryDark);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(color);
+        }
     }
 }

@@ -24,6 +24,7 @@ public class Product {
 
     public Product() {
         nutriments = new ArrayList<>();
+        additives  = new ArrayList<>();
         palm_oil = false;
         found = true;
     }
@@ -107,6 +108,18 @@ public class Product {
 
     public void addNutriment(Nutriment nutriment) {
         nutriments.add(nutriment);
+    }
+
+    public ArrayList<Additive> getAdditives() {
+        return additives;
+    }
+
+    public void setAdditives(ArrayList<Additive> additives) {
+        this.additives = additives;
+    }
+
+    public void addAdditive(Additive additive) {
+        additives.add(additive);
     }
 
     public boolean containsPalmOil() {

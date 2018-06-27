@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimary">#4caf50</color>
+    <color name="colorPrimaryDark">#43a047</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="redPrimary">#d32f2f</color>
+    <color name="redPrimaryDark">#c62828</color>
     <color name="bnv_tab_item_default">#96ffffff</color>
 </resources>

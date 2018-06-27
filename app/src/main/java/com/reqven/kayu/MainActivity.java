@@ -3,10 +3,15 @@ package com.reqven.kayu;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -16,6 +21,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -28,10 +35,28 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -58,7 +83,14 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Frag
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
 
-        fragmentHome       = new HomeFragment();
+        downloadFiles();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        Map<String, ?> settings = prefs.getAll();
+        settings.isEmpty();
+
+        PreferencesActivity.retrieveUserPreferences(getApplicationContext());
+
+        fragmentHome    = new HomeFragment();
         fragmentHistory = new HistoryFragment();
         fragmentAccount = new AccountFragment();
 
@@ -78,11 +110,6 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Frag
                         break;
                     case 1:
                         getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.fragment_container, fragmentAccount)
-                                .commit();
-                        break;
-                    case 2:
-                        getSupportFragmentManager().beginTransaction()
                                 .replace(R.id.fragment_container, fragmentHistory)
                                 .commit();
                         break;
@@ -100,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Frag
             }
         });
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -109,13 +136,13 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Frag
             }
         });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolBar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         getSupportFragmentManager().beginTransaction()
@@ -127,33 +154,26 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Frag
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBluetoothAdapter == null) {
             // Device doesn't support Bluetooth
-        }
-        if (!mBluetoothAdapter.isEnabled()) {
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent, 1);
-        }
-        Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
-
-        if (pairedDevices.size() > 0) {
-            // There are paired devices. Get the name and address of each paired device.
-            devices = new ArrayList<>();
-            for (BluetoothDevice device : pairedDevices) {
-                String deviceName = device.getName();
-                String deviceHardwareAddress = device.getAddress(); // MAC address
-                //paired_devices_list.add(device.getName() + "\n" + device.getAddress());
-                devices.add(device);
-                //mDevice = device;
+        } else {
+            if (!mBluetoothAdapter.isEnabled()) {
+                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBtIntent, 1);
             }
-            fragmentHome.setPairedDevices(devices);
-        }
+            Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
 
+            if (pairedDevices.size() > 0) {
+                devices = new ArrayList<>();
+                devices.addAll(pairedDevices);
+                fragmentHome.setPairedDevices(devices);
+            }
+        }
     }
 
 
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -183,16 +203,16 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Frag
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
-
+            Intent intent = new Intent(getApplicationContext(), PreferencesActivity.class);
+            startActivity(intent);
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
@@ -203,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Frag
 
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -234,6 +254,43 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Frag
         fragmentHistory.addItem(input);
     }
 
+
+    private void downloadFiles() {
+        final String url = "https://api.myjson.com/bins/w2i9q";
+        final String filename = "additives.json";
+
+        try {
+            InputStream inputStream = getApplicationContext().openFileInput(filename);
+            inputStream.close();
+            Toast.makeText(getApplicationContext(), "file " + filename + " exist", Toast.LENGTH_SHORT).show();
+        } catch (FileNotFoundException e) {
+            Toast.makeText(getApplicationContext(), "file " + filename + " doesnt exist", Toast.LENGTH_SHORT).show();
+
+            RequestQueue queue = Volley.newRequestQueue(this);
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url,null, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    try {
+                        OutputStreamWriter outputStreamWriter = new OutputStreamWriter(openFileOutput(filename, Context.MODE_PRIVATE));
+                        outputStreamWriter.write(response.toString());
+                        outputStreamWriter.close();
+                    }
+                    catch (IOException e) {
+                        Log.e("Exception", "File write failed: " + e.toString());
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                }
+            });
+            MySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
+
+        } catch (IOException e) {
+            Log.e("login activity", "Can not read file: " + e.toString());
+        }
+    }
 
 
     private class ConnectThread extends Thread {
@@ -320,11 +377,8 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Frag
             mmOutStream = tmpOut;
         }
         public void run() {
-
             mmBuffer = new byte[1024];
-            int numBytes; // bytes returned from read()
-
-            // Keep listening to the InputStream until an exception occurs.
+            int numBytes;
 
             while(true) {
                 try {
@@ -345,41 +399,6 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Frag
                     break;
                 }
             }
-
-
-            /*
-            byte[] buffer = new byte[1024];
-            mmBuffer = new byte[1024];
-            int begin = 0;
-            int bytes = 0;
-            int numBytes;
-            while (true) {
-                try {
-                    numBytes = mmInStream.read(mmBuffer);
-                    Log.d(TAG, String.valueOf(numBytes));
-                    Log.d(TAG, )
-
-                    Integer p = mmInStream.read();
-                    bytes += mmInStream.read(buffer, bytes, buffer.length - bytes);
-
-                    Log.d(TAG, "{ = " + String.valueOf("{".getBytes()[0]));
-                    Log.d(TAG, "} = " + String.valueOf("}".getBytes()[0]));
-
-                    for(int i = begin; i < bytes; i++) {
-
-                        if(buffer[i] == "}".getBytes()[0]) {
-                            mHandler.obtainMessage(1, begin, i, buffer).sendToTarget();
-                            begin = i + 1;
-                            if(i == bytes - 1) {
-                                bytes = 0;
-                                begin = 0;
-                            }
-                        }
-                    }
-                } catch (IOException e) {
-                    break;
-                }
-            }*/
         }
         public void write(byte[] bytes) {
             try {
@@ -401,8 +420,8 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Frag
         @Override
         public boolean handleMessage(Message msg) {
             //byte[] writeBuf = (byte[]) msg.obj;
-            int begin = (int)msg.arg1;
-            int end = (int)msg.arg2;
+            int begin = msg.arg1;
+            int end = msg.arg2;
             switch(msg.what) {
                 case 1:
                     //String writeMessage = new String(writeBuf);
@@ -432,4 +451,6 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Frag
             return false;
         }
     });
+
+
 }
