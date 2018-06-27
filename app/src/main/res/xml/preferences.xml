@@ -38,11 +38,11 @@
     <PreferenceCategory
         android:title="Additifs">
         <ListPreference
-            android:key="list"
-            android:title="Toxicité"
+            android:key="additives"
+            android:title="Rejets des additifs"
             android:entries="@array/additives"
             android:entryValues="@array/additives_values"
-            android:summary="Seuil minimum de toxicité des additifs à refuser"/>
+            android:summary="%s"/>
         <EditTextPreference
             android:key="additives"
             android:title="Exceptions"

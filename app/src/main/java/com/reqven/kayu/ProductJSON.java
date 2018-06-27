@@ -36,6 +36,10 @@ public class ProductJSON {
                 levels           = p.getJSONObject("nutrient_levels");
                 additives        = p.getJSONArray("additives_tags");
                 ingredients_tags = p.getJSONArray("ingredients_tags");
+
+                if (ingredients_tags.toString().contains("fr:huile-de-palme")) {
+                    product.setPalmOil(true);
+                }
                 setProductNutriments();
                 setProductAdditives();
             } else {
@@ -71,9 +75,6 @@ public class ProductJSON {
                 nutriment.setLevel(level);
                 nutriment.setIcon(icon);
 
-                if (ingredients_tags.toString().contains("fr:huile-de-palme")) {
-                    product.setPalmOil(true);
-                }
                 switch(i) {
                     case "salt":          product.setSalt(nutriment);      break;
                     case "sugars":        product.setSugar(nutriment);     break;
@@ -82,6 +83,7 @@ public class ProductJSON {
                 }
             } catch(JSONException e) {
                 Log.d("Debug","ProductJSON:setProductNutriments: " + e.getMessage());
+                e.printStackTrace();
             }
         }
     }

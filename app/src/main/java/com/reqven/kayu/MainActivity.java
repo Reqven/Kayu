@@ -437,6 +437,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Frag
 
                     if (last.equals("}")) {
                         String barcode = recDataString.toString();
+                        barcode = barcode.replaceAll("[{}]", " ");
                         Toast.makeText(getBaseContext(), barcode, Toast.LENGTH_LONG).show();
 
                         fragmentHistory.addItem(barcode);

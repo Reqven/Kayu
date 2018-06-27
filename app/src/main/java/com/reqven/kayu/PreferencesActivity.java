@@ -16,6 +16,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -30,13 +31,13 @@ public class PreferencesActivity extends AppCompatActivity {
 
         UserPreferences preferencesFragment = new UserPreferences();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-
-        preferences.registerOnSharedPreferenceChangeListener(new SharedPreferences.OnSharedPreferenceChangeListener() {
+        SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
              @Override
              public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                  preferencesChanged = true;
              }
-        });
+        };
+        preferences.registerOnSharedPreferenceChangeListener(listener);
 
         getSupportActionBar().setTitle("Paramètres");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -55,35 +56,34 @@ public class PreferencesActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         if (preferencesChanged) {
             updateUserPreferences();
         }
+        super.onDestroy();
     }
 
     public static void retrieveUserPreferences(final Context context) {
-        final String url = "https://api.myjson.com/bins/g08da";
+        final String url = "http://10.40.74.15/api/user/1/preferences";
 
         RequestQueue queue = Volley.newRequestQueue(context);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url,null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
-                    String palmoil      = response.getString("palmOil");
-                    String salt         = response.getString("salt");
-                    String sugar        = response.getString("sugar");
-                    String fat          = response.getString("fat");
-                    String saturatedFat = response.getString("saturedFat");
-                    //String additives    = response.getString("additives");
+                    JSONObject user        = response.getJSONObject("user");
+                    JSONObject preferences = user.getJSONObject("preferences");
+                    JSONObject nutrients   = preferences.getJSONObject("nutrients");
+                    String     additives   = preferences.getString("additives");
 
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                     SharedPreferences.Editor settings = prefs.edit();
 
-                    settings.putBoolean("palmoil",     true);
-                    settings.putString("salt",         salt);
-                    settings.putString("sugar",        sugar);
-                    settings.putString("fat",          fat);
-                    settings.putString("saturatedFat", saturatedFat);
+                    settings.putBoolean("palmoil",     nutrients.getBoolean("palm_oil"));
+                    settings.putString("salt",         nutrients.getString("salt"));
+                    settings.putString("sugar",        nutrients.getString("sugar"));
+                    settings.putString("fat",          nutrients.getString("fat"));
+                    settings.putString("saturatedFat", nutrients.getString("saturated_fat"));
+                    settings.putString("additives",    additives);
                     settings.apply();
                 }
                 catch (JSONException e) {
@@ -100,6 +100,46 @@ public class PreferencesActivity extends AppCompatActivity {
     }
 
     private void updateUserPreferences() {
-        Toast.makeText(getApplicationContext(), "now sending new settings to the api", Toast.LENGTH_SHORT).show();
+        final String url = "http://10.40.74.15/api/user/1/preferences";
+        Toast.makeText(getApplicationContext(), "updating app", Toast.LENGTH_SHORT).show();
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor settings = prefs.edit();
+
+        try {
+            JSONObject data = new JSONObject();
+            JSONObject user = new JSONObject();
+            JSONObject preferences = new JSONObject();
+            JSONObject nutrients = new JSONObject();
+
+            nutrients.put("palm_oil",       prefs.getBoolean("palmoil",      true));
+            nutrients.put("salt",           prefs.getString( "salt",         "low"));
+            nutrients.put("sugar",          prefs.getString( "sugar",        "low"));
+            nutrients.put("fat",            prefs.getString( "fat",          "low"));
+            nutrients.put("saturated_fat",  prefs.getString( "saturatedFat", "low"));
+
+            preferences.put("nutrients", nutrients);
+            preferences.put("additives", prefs.getString("additives", "dangerous"));
+
+            user.put("preferences", preferences);
+            data.put("user", user);
+
+
+            RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT, url, data, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    Toast.makeText(getApplicationContext(), "settings updated", Toast.LENGTH_SHORT).show();
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    error.printStackTrace();
+                }
+            });
+            MySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsonObjectRequest);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }
