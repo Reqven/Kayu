@@ -12,6 +12,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import java.util.ArrayList;
+import java.util.Map;
+
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -32,6 +34,8 @@ public class ProductActivity extends AppCompatActivity {
     private AppCompatTextView description;
     private RecyclerView recyclerView;
 
+    private FragmentProduct fragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +47,6 @@ public class ProductActivity extends AppCompatActivity {
         toolBar      = findViewById(R.id.main_toolbar);
         tabLayout    = findViewById(R.id.main_tabs);
         description  = findViewById(R.id.description);
-        recyclerView = findViewById(R.id.nutriments);
 
         toolBar.setTitle("Fiche produit");
         setSupportActionBar(toolBar);
@@ -63,22 +66,30 @@ public class ProductActivity extends AppCompatActivity {
                         productJSON = new ProductJSON(response, getBaseContext());
                         product     = productJSON.getProduct();
 
-                        ArrayList<Nutriment> nutriments = new ArrayList<>();
                         if (product.isFound()) {
-                            nutriments.add(product.getSalt());
-                            nutriments.add(product.getSugar());
-                            nutriments.add(product.getFat());
-                            nutriments.add(product.getSaturated());
-                        }
-                        NutrimentViewAdapter adapter = new NutrimentViewAdapter(nutriments);
-                        recyclerView.setLayoutManager(new LinearLayoutManager(getBaseContext()));
-                        recyclerView.setItemAnimator(new DefaultItemAnimator());
-                        recyclerView.setAdapter(adapter);
+                            toolBar.setTitle(product.getName());
+                            if (product.isComplete()) {
 
-                        toolBar.setTitle(product.getName());
-                        findViewById(R.id.loadingLayout).setVisibility(View.GONE);
-                        findViewById(R.id.contentLayout).setVisibility(View.VISIBLE);
-                        setProductLayout(product.isFound());
+                                ArrayList<Nutriment> nutriments = new ArrayList<>();
+                                nutriments.add(product.getSalt());
+                                nutriments.add(product.getSugar());
+                                nutriments.add(product.getFat());
+                                nutriments.add(product.getSaturated());
+
+                                fragment = new FragmentProduct.Passed();
+                                fragment.setNutriments(nutriments);
+                            } else {
+                                fragment = new FragmentProduct.Incomplete();
+                            }
+                        } else {
+                            fragment = new FragmentProduct.NotFound();
+                        }
+                        setLayoutColor(fragment);
+                        findViewById(R.id.loadingCircle).setVisibility(View.GONE);
+
+                        getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.fragment_container, fragment)
+                                .commit();
                     }
                 }, new Response.ErrorListener() {
                     @Override
@@ -96,13 +107,35 @@ public class ProductActivity extends AppCompatActivity {
         return true;
     }
 
-    public void setProductLayout(Boolean good) {
+    public void setLayoutColor(FragmentProduct fragment) {
+        Map<String, Integer> colors = fragment.getColors();
+        Integer colorPrimary = getResources().getColor(colors.get("primary"));
+        Integer colorPrimaryDark = getResources().getColor(colors.get("primaryDark"));
+
+        toolBar.setBackgroundColor(colorPrimary);
+        tabLayout.setBackgroundColor(colorPrimary);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(colorPrimaryDark);
+        }
+    }
+
+    public void setProductLayout(Integer type) {
         int primary     = R.color.colorPrimary;
         int primaryDark = R.color.colorPrimaryDark;
-
-        if (!good) {
-            primary = R.color.redPrimary;
-            primaryDark = R.color.redPrimaryDark;
+        switch(type) {
+            case 0:
+                break;
+            case 1:
+                primary     = R.color.redPrimary;
+                primaryDark = R.color.redPrimaryDark;
+                break;
+            case 2:
+                primary     = R.color.orangePrimary;
+                primaryDark = R.color.orangePrimaryDark;
+                break;
         }
         int color = getResources().getColor(primary);
         toolBar.setBackgroundColor(color);

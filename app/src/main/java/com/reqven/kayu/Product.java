@@ -12,6 +12,7 @@ public class Product {
     private String name;
     private String barcode;
     private Boolean found;
+    private Boolean complete;
     private Nutriment salt;
     private Nutriment sugar;
     private Nutriment fat;
@@ -136,5 +137,13 @@ public class Product {
 
     public void setIsFound(Boolean found) {
         this.found = found;
+    }
+
+    public Boolean isComplete() {
+        return complete;
+    }
+
+    public void setIsComplete(Boolean complete) {
+        this.complete = complete;
     }
 }

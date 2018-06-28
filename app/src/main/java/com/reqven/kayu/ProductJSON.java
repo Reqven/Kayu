@@ -13,26 +13,30 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 public class ProductJSON {
     private Product product;
     private JSONObject levels;
     private JSONArray additives;
-    private JSONObject nutriments;
+    private JSONObject nutrients;
     private JSONArray ingredients_tags;
     private Context context;
 
     public ProductJSON(JSONObject json, Context context) {
         product = new Product();
+        this.context = context;
         try {
-            if (json.getString("status").equals("1")) {
-                JSONObject p = json.getJSONObject("product");
-                this.context = context;
+            JSONObject p = json.getJSONObject("product");
+            JSONArray states = p.getJSONArray("states_tags");
 
-                product.setBarcode(json.getString("code"));
-                product.setName(p.getString("product_name_fr"));
+            Boolean isCompleted = isProductComplete(states);
+            product.setIsComplete(isCompleted);
+            product.setBarcode(json.getString("code"));
+            product.setName(p.getString("product_name_fr"));
 
-                nutriments       = p.getJSONObject("nutriments");
+            if (isCompleted) {
+                nutrients       = p.getJSONObject("nutriments");
                 levels           = p.getJSONObject("nutrient_levels");
                 additives        = p.getJSONArray("additives_tags");
                 ingredients_tags = p.getJSONArray("ingredients_tags");
@@ -42,21 +46,35 @@ public class ProductJSON {
                 }
                 setProductNutriments();
                 setProductAdditives();
-            } else {
-                product.setIsFound(false);
             }
         } catch (JSONException e) {
-            Log.d("Debug","ProductJSON:__construct: " + e.getMessage());
+            e.printStackTrace();
             product.setIsFound(false);
         }
+    }
+
+    private Boolean isProductComplete(JSONArray json) {
+        Boolean isComplete = true;
+        String[] list = new String[]{
+            "en:ingredients-to-be-completed",
+            "en:quantity-to-be-completed",
+            "en:product-name-to-be-completed"
+        };
+        String states = json.toString();
+        for (String s : list) {
+            if (states.contains(s)) {
+                isComplete = false;
+            }
+        }
+        return isComplete;
     }
 
     private void setProductNutriments() {
         String[] values = {"salt", "sugars", "fat", "saturated-fat"};
         for (String i : values) {
             try {
-                Nutriment nutriment = new Nutriment();
-                nutriment.setName(i);
+                Nutriment nutrient = new Nutriment();
+                nutrient.setName(i);
 
                 String label = i.replace('-', '_');
                 int icon =  context.getResources().getIdentifier("ic_nutriment_" + label + "_24dp", "drawable", context.getPackageName());
@@ -64,22 +82,22 @@ public class ProductJSON {
 
                 if (identifier != 0) {
                     label = context.getResources().getString(identifier);
-                    nutriment.setLabel(label);
+                    nutrient.setLabel(label);
                 }
-                String quantity = nutriments.getString(i + "_100g");
-                String unit     = nutriments.getString(i + "_unit");
+                String quantity = nutrients.getString(i + "_100g");
+                String unit     = nutrients.getString(i + "_unit");
                 String level    = levels.getString(i);
 
-                nutriment.setQuantity(Float.valueOf(quantity));
-                nutriment.setUnit(unit);
-                nutriment.setLevel(level);
-                nutriment.setIcon(icon);
+                nutrient.setQuantity(Float.valueOf(quantity));
+                nutrient.setUnit(unit);
+                nutrient.setLevel(level);
+                nutrient.setIcon(icon);
 
                 switch(i) {
-                    case "salt":          product.setSalt(nutriment);      break;
-                    case "sugars":        product.setSugar(nutriment);     break;
-                    case "fat":           product.setFat(nutriment);       break;
-                    case "saturated-fat": product.setSaturated(nutriment); break;
+                    case "salt":          product.setSalt(nutrient);      break;
+                    case "sugars":        product.setSugar(nutrient);     break;
+                    case "fat":           product.setFat(nutrient);       break;
+                    case "saturated-fat": product.setSaturated(nutrient); break;
                 }
             } catch(JSONException e) {
                 Log.d("Debug","ProductJSON:setProductNutriments: " + e.getMessage());

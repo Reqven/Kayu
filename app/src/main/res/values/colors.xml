@@ -5,5 +5,7 @@
     <color name="colorAccent">#FF4081</color>
     <color name="redPrimary">#d32f2f</color>
     <color name="redPrimaryDark">#c62828</color>
+    <color name="orangePrimary">#F57C00</color>
+    <color name="orangePrimaryDark">#EF6C00</color>
     <color name="bnv_tab_item_default">#96ffffff</color>
 </resources>

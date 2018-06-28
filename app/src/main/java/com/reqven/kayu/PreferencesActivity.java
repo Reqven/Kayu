@@ -31,11 +31,11 @@ public class PreferencesActivity extends AppCompatActivity {
 
         UserPreferences preferencesFragment = new UserPreferences();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
         SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-             @Override
-             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                 preferencesChanged = true;
-             }
+            public void onSharedPreferenceChanged(SharedPreferences preferences, String key) {
+                preferencesChanged = true;
+            }
         };
         preferences.registerOnSharedPreferenceChangeListener(listener);
 
@@ -63,7 +63,7 @@ public class PreferencesActivity extends AppCompatActivity {
     }
 
     public static void retrieveUserPreferences(final Context context) {
-        final String url = "http://10.40.74.15/api/user/1/preferences";
+        final String url = "http://kayu-dev.herokuapp.com/api/user/1/preferences";
 
         RequestQueue queue = Volley.newRequestQueue(context);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url,null, new Response.Listener<JSONObject>() {
@@ -100,8 +100,7 @@ public class PreferencesActivity extends AppCompatActivity {
     }
 
     private void updateUserPreferences() {
-        final String url = "http://10.40.74.15/api/user/1/preferences";
-        Toast.makeText(getApplicationContext(), "updating app", Toast.LENGTH_SHORT).show();
+        final String url = "http://kayu-dev.herokuapp.com/api/user/1/preferences";
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor settings = prefs.edit();
@@ -129,7 +128,7 @@ public class PreferencesActivity extends AppCompatActivity {
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT, url, data, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
-                    Toast.makeText(getApplicationContext(), "settings updated", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "preferences updated", Toast.LENGTH_SHORT).show();
                 }
             }, new Response.ErrorListener() {
                 @Override
@@ -142,4 +141,6 @@ public class PreferencesActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
+
 }

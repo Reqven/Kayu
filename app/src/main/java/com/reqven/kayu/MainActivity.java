@@ -84,10 +84,6 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Frag
         setContentView(R.layout.activity_main2);
 
         downloadFiles();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        Map<String, ?> settings = prefs.getAll();
-        settings.isEmpty();
-
         PreferencesActivity.retrieveUserPreferences(getApplicationContext());
 
         fragmentHome    = new HomeFragment();

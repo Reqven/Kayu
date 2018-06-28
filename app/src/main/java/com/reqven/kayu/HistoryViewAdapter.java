@@ -8,13 +8,13 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 
-public class HistoryItemRecyclerViewAdapter extends RecyclerView.Adapter<HistoryViewHolder> {
+public class HistoryViewAdapter extends RecyclerView.Adapter<HistoryViewHolder> {
 
     private final OnListItemClickListener listener;
     private final ArrayList<String> values;
 
 
-    public HistoryItemRecyclerViewAdapter(ArrayList<String> values, OnListItemClickListener listener) {
+    public HistoryViewAdapter(ArrayList<String> values, OnListItemClickListener listener) {
         this.values = values;
         this.listener = listener;
     }

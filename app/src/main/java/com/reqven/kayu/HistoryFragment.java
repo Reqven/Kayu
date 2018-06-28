@@ -19,7 +19,7 @@ public class HistoryFragment extends Fragment {
     private FragmentHistoryListener listener;
     private ArrayList<Product> products;
     private ArrayList<String> codes;
-    private HistoryItemRecyclerViewAdapter adapter;
+    private HistoryViewAdapter adapter;
 
     public interface FragmentHistoryListener {
         void onInputHistorySent(CharSequence input);
@@ -31,8 +31,9 @@ public class HistoryFragment extends Fragment {
         codes.add("3478820023184");
         codes.add("3017620424403");
         codes.add("568986451684651");
+        codes.add("3329770061866");
 
-        adapter = new HistoryItemRecyclerViewAdapter(codes, new HistoryItemRecyclerViewAdapter.OnListItemClickListener() {
+        adapter = new HistoryViewAdapter(codes, new HistoryViewAdapter.OnListItemClickListener() {
             @Override
             public void onItemClicked(int position) {
                 Intent intent = new Intent(getContext(), ProductActivity.class);
