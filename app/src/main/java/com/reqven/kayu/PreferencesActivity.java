@@ -63,7 +63,7 @@ public class PreferencesActivity extends AppCompatActivity {
     }
 
     public static void retrieveUserPreferences(final Context context) {
-        final String url = "http://kayu-dev.herokuapp.com/api/user/1/preferences";
+        final String url = "http://kayu-dev.tryfcomet.com:8000/api/user/1/preferences";
 
         RequestQueue queue = Volley.newRequestQueue(context);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url,null, new Response.Listener<JSONObject>() {
@@ -78,12 +78,12 @@ public class PreferencesActivity extends AppCompatActivity {
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                     SharedPreferences.Editor settings = prefs.edit();
 
-                    settings.putBoolean("palmoil",     nutrients.getBoolean("palm_oil"));
-                    settings.putString("salt",         nutrients.getString("salt"));
-                    settings.putString("sugar",        nutrients.getString("sugar"));
-                    settings.putString("fat",          nutrients.getString("fat"));
-                    settings.putString("saturatedFat", nutrients.getString("saturated_fat"));
-                    settings.putString("additives",    additives);
+                    settings.putBoolean("palmoil",      nutrients.getBoolean("palm_oil"));
+                    settings.putString("salt",          nutrients.getString("salt"));
+                    settings.putString("sugars",        nutrients.getString("sugar"));
+                    settings.putString("fat",           nutrients.getString("fat"));
+                    settings.putString("saturated_fat", nutrients.getString("saturated_fat"));
+                    settings.putString("additives",     additives);
                     settings.apply();
                 }
                 catch (JSONException e) {
@@ -100,7 +100,7 @@ public class PreferencesActivity extends AppCompatActivity {
     }
 
     private void updateUserPreferences() {
-        final String url = "http://kayu-dev.herokuapp.com/api/user/1/preferences";
+        final String url = "http://kayu-dev.tryfcomet.com:8000/api/user/1/preferences";
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor settings = prefs.edit();
@@ -113,9 +113,9 @@ public class PreferencesActivity extends AppCompatActivity {
 
             nutrients.put("palm_oil",       prefs.getBoolean("palmoil",      true));
             nutrients.put("salt",           prefs.getString( "salt",         "low"));
-            nutrients.put("sugar",          prefs.getString( "sugar",        "low"));
+            nutrients.put("sugar",          prefs.getString( "sugars",        "low"));
             nutrients.put("fat",            prefs.getString( "fat",          "low"));
-            nutrients.put("saturated_fat",  prefs.getString( "saturatedFat", "low"));
+            nutrients.put("saturated_fat",  prefs.getString( "saturated_fat", "low"));
 
             preferences.put("nutrients", nutrients);
             preferences.put("additives", prefs.getString("additives", "dangerous"));

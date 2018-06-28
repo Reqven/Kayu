@@ -1,5 +1,6 @@
 package com.reqven.kayu;
 
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -13,13 +14,14 @@ public class Product {
     private String barcode;
     private Boolean found;
     private Boolean complete;
+    private Boolean passed;
     private Nutriment salt;
     private Nutriment sugar;
     private Nutriment fat;
     private Nutriment saturated;
     private Nutriment protein;
     private Nutriment fibre;
-    private boolean palm_oil;
+    private Boolean palm_oil;
     private ArrayList<Nutriment> nutriments;
     private ArrayList<Additive> additives;
 
@@ -28,6 +30,7 @@ public class Product {
         additives  = new ArrayList<>();
         palm_oil = false;
         found = true;
+        passed = true;
     }
 
     public Product(String barcode) {
@@ -145,5 +148,13 @@ public class Product {
 
     public void setIsComplete(Boolean complete) {
         this.complete = complete;
+    }
+
+    public Boolean getPassed() {
+        return passed;
+    }
+
+    public void setPassed(Boolean passed) {
+        this.passed = passed;
     }
 }

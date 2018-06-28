@@ -12,7 +12,7 @@
             android:entryValues="@array/nutriments_values"
             android:summary="%s"/>
         <ListPreference
-            android:key="sugar"
+            android:key="sugars"
             android:title="@string/nutriment_sugars"
             android:entries="@array/nutriments"
             android:entryValues="@array/nutriments_values"
@@ -24,7 +24,7 @@
             android:entryValues="@array/nutriments_values"
             android:summary="%s"/>
         <ListPreference
-            android:key="saturatedFat"
+            android:key="saturated_fat"
             android:title="@string/nutriment_saturated_fat"
             android:entries="@array/nutriments"
             android:entryValues="@array/nutriments_values"

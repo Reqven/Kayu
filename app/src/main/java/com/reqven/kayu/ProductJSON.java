@@ -1,6 +1,8 @@
 package com.reqven.kayu;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -46,6 +48,7 @@ public class ProductJSON {
                 }
                 setProductNutriments();
                 setProductAdditives();
+                check();
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -151,6 +154,40 @@ public class ProductJSON {
                 product.addAdditive(additive);
             } catch (JSONException e) {
                 e.printStackTrace();
+            }
+        }
+    }
+
+    private void check() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+
+        Boolean palm_oil = preferences.getBoolean("palmoil",        true);
+        String salt      = preferences.getString( "salt",           "low");
+        String sugar     = preferences.getString( "sugar",          "low");
+        String fat       = preferences.getString( "fat",            "low");
+        String saturated = preferences.getString( "saturatedFat",   "low");
+        String additives = preferences.getString( "additives",      "dangerous");
+
+        ArrayList<Nutriment> nutriments = new ArrayList<>();
+        nutriments.add(product.getSalt());
+        nutriments.add(product.getSugar());
+        nutriments.add(product.getFat());
+        nutriments.add(product.getSaturated());
+
+        for (Nutriment n : nutriments) {
+            String label = n.getName().replace('-', '_');
+            String pref  = preferences.getString(label, "low");
+            switch (pref) {
+                case "low":
+                    if (n.getLevel().equals("medium") || n.getLevel().equals("high") || n.getLevel().equals("moderate")) {
+                        product.setPassed(false);
+                    }
+                    break;
+                case "medium":
+                    if (n.getLevel().equals("high")) {
+                        product.setPassed(false);
+                    }
+                    break;
             }
         }
     }

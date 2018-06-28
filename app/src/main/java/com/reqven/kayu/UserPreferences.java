@@ -13,10 +13,10 @@ public class UserPreferences extends PreferenceFragmentCompat {
         addPreferencesFromResource(R.xml.preferences);
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
 
-        String salt      = preferences.getString("salt", null);
+        /*String salt      = preferences.getString("salt", null);
         String sugar     = preferences.getString("sugar", null);
         String fat       = preferences.getString("fat", null);
-        String saturated = preferences.getString("saturatedFat", null);
+        String saturated = preferences.getString("saturated_fat", null);*/
 
         //findPreference("salt").setSummary(salt);
         //findPreference("sugar").setSummary(sugar);

@@ -76,15 +76,18 @@ public class ProductActivity extends AppCompatActivity {
                             toolBar.setTitle(product.getName());
                             if (product.isComplete()) {
 
+                                if (product.getPassed()) {
+                                    fragment = new FragmentProduct.Passed();
+                                } else {
+                                    fragment = new FragmentProduct.NotPassed();
+                                }
+
                                 nutriments.add(product.getSalt());
                                 nutriments.add(product.getSugar());
                                 nutriments.add(product.getFat());
                                 nutriments.add(product.getSaturated());
 
-                                fragment = new FragmentProduct.Passed();
                                 fragment.setNutriments(nutriments);
-
-                                checkProductWithUserPreferences();
                             } else {
                                 fragment = new FragmentProduct.Incomplete();
                             }
@@ -127,23 +130,5 @@ public class ProductActivity extends AppCompatActivity {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(colorPrimaryDark);
         }
-    }
-
-    public void checkProductWithUserPreferences() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-
-        Boolean palm_oil = preferences.getBoolean("palmoil",        true);
-        String salt      = preferences.getString( "salt",           "low");
-        String sugar     = preferences.getString( "sugar",          "low");
-        String fat       = preferences.getString( "fat",            "low");
-        String saturated = preferences.getString( "saturatedFat",   "low");
-        String additives = preferences.getString( "additives",      "dangerous");
-
-        /*for (Nutriment n : nutriments) {
-            Boolean good = n.matchPreferences(preferences.getString(n.getName(), "low"));
-        }
-        if (salt.equals("medium")) {
-            assert
-        }*/
     }
 }

@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Frag
     private BluetoothDevice mDevice;
     static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private StringBuilder recDataString = new StringBuilder();
+    private ConnectedThread mConnectedThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -320,7 +321,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Frag
                 }
                 return;
             }
-            final ConnectedThread mConnectedThread = new ConnectedThread(mmSocket);
+            mConnectedThread = new ConnectedThread(mmSocket);
             mConnectedThread.start();
 
             mConnectedThread.write("1".getBytes());
@@ -434,9 +435,43 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Frag
                     if (last.equals("}")) {
                         String barcode = recDataString.toString();
                         barcode = barcode.replaceAll("[{}]", " ");
-                        Toast.makeText(getBaseContext(), barcode, Toast.LENGTH_LONG).show();
+                        Toast.makeText(getBaseContext(), "barcode : " + barcode + "starting api fetch", Toast.LENGTH_LONG).show();
 
+                        String url = "https://world-fr.openfoodfacts.org/api/v0.1/product/" + barcode + ".json";
+
+                        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                                Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                Toast.makeText(getBaseContext(), "request done", Toast.LENGTH_LONG).show();
+                                ProductJSON productJSON = new ProductJSON(response, getBaseContext());
+                                Product product     = productJSON.getProduct();
+
+                                if (product.isFound()) {
+                                    if (product.isComplete()) {
+                                        if (product.getPassed()) {
+                                            mConnectedThread.write("0".getBytes());
+                                        } else {
+                                            mConnectedThread.write("2".getBytes());
+                                        }
+                                    } else {
+                                        mConnectedThread.write("1".getBytes());
+                                    }
+                                } else {
+                                    mConnectedThread.write("1".getBytes());
+                                }
+                                sendProduct(product);
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+
+                            }
+                        });
+                        MySingleton.getInstance(getBaseContext()).addToRequestQueue(jsonObjectRequest);
                         fragmentHistory.addItem(barcode);
+
+
                         //scans_list.add(barcode);
                         //ArrayAdapter adapter = new ArrayAdapter(getContext(),android.R.layout.simple_list_item_1, scans_list);
                         //scans.setAdapter(adapter);
@@ -450,4 +485,30 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Frag
     });
 
 
+    private void sendProduct(Product product) {
+        String url = "http://kayu-dev.tryfcomet.com:8000/api/user/1/products/add";
+
+        JSONObject data = new JSONObject();
+        try {
+            data.put("user_id", 1);
+            data.put("barcode", product.getBarcode());
+            data.put("status",  product.getPassed());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        JsonObjectRequest addProduct = new JsonObjectRequest(
+                Request.Method.POST, url, data, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Toast.makeText(getBaseContext(), "product sent", Toast.LENGTH_LONG).show();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        MySingleton.getInstance(getBaseContext()).addToRequestQueue(addProduct);
+    }
 }
