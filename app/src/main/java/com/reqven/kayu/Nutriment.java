@@ -76,4 +76,8 @@ public class Nutriment {
     public void setIcon(int icon) {
         this.icon = icon;
     }
+
+    public Boolean matchPreferences(String preference) {
+        return true;
+    }
 }

@@ -1,11 +1,14 @@
 package com.reqven.kayu;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.Preference;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import java.util.ArrayList;
 import java.util.Map;
 
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -33,6 +37,7 @@ public class ProductActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private AppCompatTextView description;
     private RecyclerView recyclerView;
+    ArrayList<Nutriment> nutriments;
 
     private FragmentProduct fragment;
 
@@ -43,6 +48,7 @@ public class ProductActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         final String code = intent.getStringExtra("code");
+        nutriments = new ArrayList<>();
 
         toolBar      = findViewById(R.id.main_toolbar);
         tabLayout    = findViewById(R.id.main_tabs);
@@ -70,7 +76,6 @@ public class ProductActivity extends AppCompatActivity {
                             toolBar.setTitle(product.getName());
                             if (product.isComplete()) {
 
-                                ArrayList<Nutriment> nutriments = new ArrayList<>();
                                 nutriments.add(product.getSalt());
                                 nutriments.add(product.getSugar());
                                 nutriments.add(product.getFat());
@@ -78,6 +83,8 @@ public class ProductActivity extends AppCompatActivity {
 
                                 fragment = new FragmentProduct.Passed();
                                 fragment.setNutriments(nutriments);
+
+                                checkProductWithUserPreferences();
                             } else {
                                 fragment = new FragmentProduct.Incomplete();
                             }
@@ -122,30 +129,21 @@ public class ProductActivity extends AppCompatActivity {
         }
     }
 
-    public void setProductLayout(Integer type) {
-        int primary     = R.color.colorPrimary;
-        int primaryDark = R.color.colorPrimaryDark;
-        switch(type) {
-            case 0:
-                break;
-            case 1:
-                primary     = R.color.redPrimary;
-                primaryDark = R.color.redPrimaryDark;
-                break;
-            case 2:
-                primary     = R.color.orangePrimary;
-                primaryDark = R.color.orangePrimaryDark;
-                break;
-        }
-        int color = getResources().getColor(primary);
-        toolBar.setBackgroundColor(color);
-        tabLayout.setBackgroundColor(color);
+    public void checkProductWithUserPreferences() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        color = getResources().getColor(primaryDark);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(color);
+        Boolean palm_oil = preferences.getBoolean("palmoil",        true);
+        String salt      = preferences.getString( "salt",           "low");
+        String sugar     = preferences.getString( "sugar",          "low");
+        String fat       = preferences.getString( "fat",            "low");
+        String saturated = preferences.getString( "saturatedFat",   "low");
+        String additives = preferences.getString( "additives",      "dangerous");
+
+        /*for (Nutriment n : nutriments) {
+            Boolean good = n.matchPreferences(preferences.getString(n.getName(), "low"));
         }
+        if (salt.equals("medium")) {
+            assert
+        }*/
     }
 }
