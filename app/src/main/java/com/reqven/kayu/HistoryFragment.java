@@ -22,22 +22,23 @@ public class HistoryFragment extends Fragment {
     private HistoryViewAdapter adapter;
 
     public interface FragmentHistoryListener {
-        void onInputHistorySent(CharSequence input);
+        void onInputHistorySent(Product product);
     }
 
     public HistoryFragment() {
-        codes = new ArrayList<>();
-        codes.add("3564700019313");
-        codes.add("3478820023184");
-        codes.add("3017620424403");
-        codes.add("568986451684651");
-        codes.add("3329770061866");
+        products = new ArrayList<>();
+        products.add(new Product("3564700019313"));
+        products.add(new Product("3478820023184"));
+        products.add(new Product("3017620424403"));/*
+        products.add(new Product("568986451684651"))
+        products.add(new Product("3329770061866"));
+        products.add(new Product("7613031333394"));*/
 
-        adapter = new HistoryViewAdapter(codes, new HistoryViewAdapter.OnListItemClickListener() {
+        adapter = new HistoryViewAdapter(products, new HistoryViewAdapter.OnListItemClickListener() {
             @Override
             public void onItemClicked(int position) {
                 Intent intent = new Intent(getContext(), ProductActivity.class);
-                intent.putExtra("code", codes.get(position));
+                intent.putExtra("code", products.get(position).getBarcode());
                 startActivity(intent);
             }
         });
@@ -57,7 +58,7 @@ public class HistoryFragment extends Fragment {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL));
+        //recyclerView.addItemDecoration(new DividerItemDecoration(context, null));
         recyclerView.setAdapter(adapter);
 
         return view;
@@ -82,8 +83,8 @@ public class HistoryFragment extends Fragment {
     }
 
 
-    public void addItem(CharSequence input) {
-        codes.add(input.toString());
-        adapter.notifyItemInserted(codes.size() - 1);
+    public void addItem(Product product) {
+        products.add(product);
+        adapter.notifyItemInserted(products.size() - 1);
     }
 }

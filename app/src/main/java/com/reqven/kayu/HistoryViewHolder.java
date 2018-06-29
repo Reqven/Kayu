@@ -6,14 +6,17 @@ import android.widget.TextView;
 
 
 public class HistoryViewHolder extends RecyclerView.ViewHolder {
-    private TextView content;
+    private TextView name;
+    private TextView barcode;
 
     HistoryViewHolder(View itemView) {
         super(itemView);
-        content = itemView.findViewById(R.id.content);
+        name = itemView.findViewById(R.id.name);
+        barcode = itemView.findViewById(R.id.barcode);
     }
 
-    void bindValue(String text) {
-        content.setText(text);
+    void bindValue(Product product) {
+        name.setText(product.getName());
+        barcode.setText(product.getBarcode());
     }
 }

@@ -9,6 +9,29 @@
     <string name="nutriment_fat">Matières grasses</string>
     <string name="nutriment_saturated_fat">Graisses saturées</string>
 
+    <string name="salt_null">Pas de sel</string>
+    <string name="salt_low">Peu salé</string>
+    <string name="salt_moderate">Un peu trop salé</string>
+    <string name="salt_high">Trop salé</string>
+
+    <string name="fat_null">Pas de gras</string>
+    <string name="fat_low">Peu gras</string>
+    <string name="fat_moderate">Un peu trop gras</string>
+    <string name="fat_high">Trop gras</string>
+
+    <string name="sugars_null">Pas de sucre</string>
+    <string name="sugars_low">Peu sucré</string>
+    <string name="sugars_moderate">Un peu trop sucré</string>
+    <string name="sugars_high">Trop sucré</string>
+
+    <string name="saturated_fat_null">Pas de graisse sat.</string>
+    <string name="saturated_fat_low">Peu de graisse sat.</string>
+    <string name="saturated_fat_moderate">Un peu trop de graisse sat.</string>
+    <string name="saturated_fat_high">Trop de graisse sat.</string>
+
+    <string name="palm_oil_no">Ne contient pas d\'huile de palme</string>
+    <string name="palm_oil_yes">Contient de l\'huile de palme</string>
+
     <string name="title_account">Account</string>
     <string name="title_activity_scrolling">ScrollingActivity</string>
     <string name="large_text">
@@ -100,7 +123,7 @@
         "For example, position the FAB to one side of stream of a cards so the FAB won’t interfere "
         "when a user tries to pick up one of cards.\n\n"
     </string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Réglages</string>
     <string name="title_activity_main2">Main2Activity</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>

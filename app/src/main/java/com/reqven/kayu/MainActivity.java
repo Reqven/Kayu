@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Frag
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onInputHistorySent("test");
+                onInputHistorySent(new Product("test"));
                 //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
             }
         });
@@ -194,6 +194,8 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Frag
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent intent = new Intent(getApplicationContext(), PreferencesActivity.class);
+            startActivity(intent);
             return true;
         }
 
@@ -208,8 +210,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Frag
         if (id == R.id.nav_camera) {
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
-            Intent intent = new Intent(getApplicationContext(), PreferencesActivity.class);
-            startActivity(intent);
+
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
@@ -247,8 +248,8 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Frag
 
     }
     @Override
-    public void onInputHistorySent(CharSequence input) {
-        fragmentHistory.addItem(input);
+    public void onInputHistorySent(Product product) {
+        fragmentHistory.addItem(product);
     }
 
 
@@ -460,6 +461,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Frag
                                 } else {
                                     mConnectedThread.write("1".getBytes());
                                 }
+                                fragmentHistory.addItem(product);
                                 sendProduct(product);
                             }
                         }, new Response.ErrorListener() {
@@ -469,8 +471,6 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Frag
                             }
                         });
                         MySingleton.getInstance(getBaseContext()).addToRequestQueue(jsonObjectRequest);
-                        fragmentHistory.addItem(barcode);
-
 
                         //scans_list.add(barcode);
                         //ArrayAdapter adapter = new ArrayAdapter(getContext(),android.R.layout.simple_list_item_1, scans_list);
@@ -486,7 +486,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Frag
 
 
     private void sendProduct(Product product) {
-        String url = "http://kayu-dev.tryfcomet.com:8000/api/user/1/products/add";
+        String url = "http://kayu-dev.tryfcomet.com/api/user/1/products/add";
 
         JSONObject data = new JSONObject();
         try {

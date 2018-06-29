@@ -1,5 +1,6 @@
 package com.reqven.kayu;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -37,7 +38,9 @@ public class ProductActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private AppCompatTextView description;
     private RecyclerView recyclerView;
-    ArrayList<Nutriment> nutriments;
+    private ArrayList<Nutriment> nutriments;
+    private Context context;
+
 
     private FragmentProduct fragment;
 
@@ -50,6 +53,7 @@ public class ProductActivity extends AppCompatActivity {
         final String code = intent.getStringExtra("code");
         nutriments = new ArrayList<>();
 
+        context      = getApplicationContext();
         toolBar      = findViewById(R.id.main_toolbar);
         tabLayout    = findViewById(R.id.main_tabs);
         description  = findViewById(R.id.description);
@@ -65,7 +69,7 @@ public class ProductActivity extends AppCompatActivity {
         RequestQueue queue = Volley.newRequestQueue(this);
         String url = "https://world-fr.openfoodfacts.org/api/v0.1/product/" + code + ".json";
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+        JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -81,13 +85,7 @@ public class ProductActivity extends AppCompatActivity {
                                 } else {
                                     fragment = new FragmentProduct.NotPassed();
                                 }
-
-                                nutriments.add(product.getSalt());
-                                nutriments.add(product.getSugar());
-                                nutriments.add(product.getFat());
-                                nutriments.add(product.getSaturated());
-
-                                fragment.setNutriments(nutriments);
+                                fragment.setProduct(product);
                             } else {
                                 fragment = new FragmentProduct.Incomplete();
                             }
@@ -107,7 +105,7 @@ public class ProductActivity extends AppCompatActivity {
 
                     }
                 });
-        MySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
+        MySingleton.getInstance(this).addToRequestQueue(request);
     }
 
 

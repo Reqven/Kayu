@@ -1,5 +1,6 @@
 package com.reqven.kayu;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,12 +10,14 @@ import java.util.ArrayList;
 public class NutrimentViewAdapter extends RecyclerView.Adapter<NutrimentViewHolder> {
 
     private final ArrayList<Nutriment> nutriments;
+    private Context context;
     public final int TYPE_DIVIDER = 0;
     public final int TYPE_NO_DIVIDER = 1;
 
 
-    public NutrimentViewAdapter(ArrayList<Nutriment> nutriments) {
+    public NutrimentViewAdapter(ArrayList<Nutriment> nutriments, Context context) {
         this.nutriments = nutriments;
+        this.context = context;
     }
 
     @Override
@@ -26,7 +29,7 @@ public class NutrimentViewAdapter extends RecyclerView.Adapter<NutrimentViewHold
             layout = R.layout.nutriment_item;
         }
         View view = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
-        return new NutrimentViewHolder(view);
+        return new NutrimentViewHolder(view, context);
     }
 
     @Override

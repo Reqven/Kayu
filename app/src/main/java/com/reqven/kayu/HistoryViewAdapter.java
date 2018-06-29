@@ -11,11 +11,11 @@ import java.util.ArrayList;
 public class HistoryViewAdapter extends RecyclerView.Adapter<HistoryViewHolder> {
 
     private final OnListItemClickListener listener;
-    private final ArrayList<String> values;
+    private final ArrayList<Product> products;
 
 
-    public HistoryViewAdapter(ArrayList<String> values, OnListItemClickListener listener) {
-        this.values = values;
+    public HistoryViewAdapter(ArrayList<Product> products, OnListItemClickListener listener) {
+        this.products = products;
         this.listener = listener;
     }
 
@@ -29,14 +29,14 @@ public class HistoryViewAdapter extends RecyclerView.Adapter<HistoryViewHolder> 
 
     @Override
     public int getItemCount() {
-        return values.size();
+        return products.size();
     }
 
     @Override
     public void onBindViewHolder(final HistoryViewHolder holder, int position) {
 
         HistoryViewHolder myHolder = (HistoryViewHolder) holder;
-        myHolder.bindValue(values.get(position));
+        myHolder.bindValue(products.get(position));
 
         /*holder.mItem = mValues.get(position);
         holder.mIdView.setText(mValues.get(position).id);
@@ -49,8 +49,8 @@ public class HistoryViewAdapter extends RecyclerView.Adapter<HistoryViewHolder> 
        });
     }
 
-    public void addItem(String input) {
-        values.add(input);
+    public void addItem(Product product) {
+        products.add(product);
     }
 
 

@@ -9,11 +9,14 @@ public class Nutriment {
     private String unit;
     private String level;
     private int icon;
+    private Boolean passed;
 
     public Nutriment() {
+        passed = true;
     }
 
     public Nutriment(String name, Float quantity, String unit, String level) {
+        super();
         if (unit.isEmpty()) {
             unit = "g";
         }
@@ -79,5 +82,13 @@ public class Nutriment {
 
     public Boolean matchPreferences(String preference) {
         return true;
+    }
+
+    public Boolean getPassed() {
+        return passed;
+    }
+
+    public void setPassed(Boolean passed) {
+        this.passed = passed;
     }
 }

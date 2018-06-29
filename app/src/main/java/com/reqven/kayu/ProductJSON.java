@@ -38,7 +38,7 @@ public class ProductJSON {
             product.setName(p.getString("product_name_fr"));
 
             if (isCompleted) {
-                nutrients       = p.getJSONObject("nutriments");
+                nutrients        = p.getJSONObject("nutriments");
                 levels           = p.getJSONObject("nutrient_levels");
                 additives        = p.getJSONArray("additives_tags");
                 ingredients_tags = p.getJSONArray("ingredients_tags");
@@ -103,6 +103,7 @@ public class ProductJSON {
                     case "saturated-fat": product.setSaturated(nutrient); break;
                 }
             } catch(JSONException e) {
+                product.setIsComplete(false);
                 Log.d("Debug","ProductJSON:setProductNutriments: " + e.getMessage());
                 e.printStackTrace();
             }
@@ -180,15 +181,20 @@ public class ProductJSON {
             switch (pref) {
                 case "low":
                     if (n.getLevel().equals("medium") || n.getLevel().equals("high") || n.getLevel().equals("moderate")) {
+                        n.setPassed(false);
                         product.setPassed(false);
                     }
                     break;
                 case "medium":
                     if (n.getLevel().equals("high")) {
+                        n.setPassed(false);
                         product.setPassed(false);
                     }
                     break;
             }
+        }
+        if (!palm_oil && product.containsPalmOil()) {
+            product.setPassed(false);
         }
     }
 
