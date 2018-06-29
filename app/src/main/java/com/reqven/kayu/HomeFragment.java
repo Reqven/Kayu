@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.AppCompatButton;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,6 +39,8 @@ public class HomeFragment extends Fragment {
     private ArrayList<BluetoothDevice> pairedDevices;
     private ArrayList paired_devices_list = new ArrayList();
     private StringBuilder recDataString = new StringBuilder();
+    private BluetoothDevice Kayu;
+    private AppCompatButton button;
 
     public interface FragmentHomeListener {
         void onInputHomeSent(CharSequence input);
@@ -49,16 +52,18 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        Button button = view.findViewById(R.id.button);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getContext(), ProductActivity.class);
-                startActivity(intent);
-            }
-        });
         ListView listView = view.findViewById(R.id.listview);
-        Switch toggle = view.findViewById(R.id.switch1);
+        button = view.findViewById(R.id.button);
+        if (Kayu != null) {
+            button.setEnabled(true);
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.connectDevice(Kayu);
+                    button.setEnabled(false);
+                }
+            });
+        }
 
         final ArrayAdapter adapter = new ArrayAdapter(getContext() ,android.R.layout.simple_list_item_1, paired_devices_list);
         listView.setAdapter(adapter);
@@ -73,9 +78,6 @@ public class HomeFragment extends Fragment {
                 listener.connectDevice(device);
             }
         });
-
-
-
         return view;
     }
 
@@ -99,6 +101,9 @@ public class HomeFragment extends Fragment {
     public void setPairedDevices(ArrayList<BluetoothDevice> devices) {
         pairedDevices = devices;
         for (BluetoothDevice device : pairedDevices) {
+            if (device.getName().equals("Kayu")) {
+                Kayu = device;
+            }
             String deviceName = device.getName();
             String deviceHardwareAddress = device.getAddress(); // MAC address
             paired_devices_list.add(deviceName + "\n" + deviceHardwareAddress);

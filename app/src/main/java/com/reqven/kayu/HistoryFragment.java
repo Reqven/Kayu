@@ -27,12 +27,12 @@ public class HistoryFragment extends Fragment {
 
     public HistoryFragment() {
         products = new ArrayList<>();
-        products.add(new Product("3564700019313"));
-        products.add(new Product("3478820023184"));
-        products.add(new Product("3017620424403"));/*
-        products.add(new Product("568986451684651"))
-        products.add(new Product("3329770061866"));
-        products.add(new Product("7613031333394"));*/
+        //products.add(new Product("3564700019313"));
+        //products.add(new Product("3478820023184"));
+        //products.add(new Product("3017620424403"));/*
+        //products.add(new Product("568986451684651"))
+        //products.add(new Product("3329770061866"));
+        //products.add(new Product("7613031333394"));*/
 
         adapter = new HistoryViewAdapter(products, new HistoryViewAdapter.OnListItemClickListener() {
             @Override

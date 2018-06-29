@@ -71,8 +71,6 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Frag
     private ArrayList<BluetoothDevice> devices;
     private ArrayList scans_list = new ArrayList();
     private ListView listView;
-    private ListView scans;
-    private Switch toggle;
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothDevice mDevice;
     static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
@@ -234,6 +232,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Frag
     public void connectDevice(BluetoothDevice device) {
         ConnectThread mConnectThread = new ConnectThread(device);
         mConnectThread.start();
+        Toast.makeText(getApplicationContext(), "Connecté à Kayu", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -260,7 +259,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Frag
         try {
             InputStream inputStream = getApplicationContext().openFileInput(filename);
             inputStream.close();
-            Toast.makeText(getApplicationContext(), "file " + filename + " exist", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), "file " + filename + " exist", Toast.LENGTH_SHORT).show();
         } catch (FileNotFoundException e) {
             Toast.makeText(getApplicationContext(), "file " + filename + " doesnt exist", Toast.LENGTH_SHORT).show();
 
@@ -436,7 +435,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Frag
                     if (last.equals("}")) {
                         String barcode = recDataString.toString();
                         barcode = barcode.replaceAll("[{}]", " ");
-                        Toast.makeText(getBaseContext(), "barcode : " + barcode + "starting api fetch", Toast.LENGTH_LONG).show();
+                        //Toast.makeText(getBaseContext(), "barcode : " + barcode + "starting api fetch", Toast.LENGTH_LONG).show();
 
                         String url = "https://world-fr.openfoodfacts.org/api/v0.1/product/" + barcode + ".json";
 
@@ -444,7 +443,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Frag
                                 Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                             @Override
                             public void onResponse(JSONObject response) {
-                                Toast.makeText(getBaseContext(), "request done", Toast.LENGTH_LONG).show();
+                                //Toast.makeText(getBaseContext(), "request done", Toast.LENGTH_LONG).show();
                                 ProductJSON productJSON = new ProductJSON(response, getBaseContext());
                                 Product product     = productJSON.getProduct();
 
@@ -501,7 +500,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Frag
                 Request.Method.POST, url, data, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                Toast.makeText(getBaseContext(), "product sent", Toast.LENGTH_LONG).show();
+                Toast.makeText(getBaseContext(), "Produit sauvegardé !", Toast.LENGTH_LONG).show();
             }
         }, new Response.ErrorListener() {
             @Override
